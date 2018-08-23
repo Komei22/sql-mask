@@ -1,95 +1,14 @@
-/* c_tokenizer.c */
-// Borrowed from http://www.cplusplus.com/faq/sequences/strings/split/
-
 #include <stdlib.h>
 #include <string.h>
-
-#include "c_tokenizer.h"
-
-// extern __thread int mysql_thread___query_digests_max_query_length; // query_digestの最大の文字数を設定。デフォルト：65000
-int mysql_thread___query_digests_max_query_length = 65000;
-
+#include <stdio.h>
 #include <ctype.h>
+
 #define bool char
-// extern __thread bool mysql_thread___query_digests_lowercase; // bool, trueなら保存されるときにlowercase。デフォルト：false
-bool mysql_thread___query_digests_lowercase=0;
-
-void tokenizer(tokenizer_t *result, const char* s, const char* delimiters, int empties )
-{
-
-	//tokenizer_t result;
-
-	result->s_length = ( (s && delimiters) ? strlen(s) : 0 );
-	result->s = NULL;
-	if (result->s_length) {
-		if (result->s_length > (PROXYSQL_TOKENIZER_BUFFSIZE-1)) {
-			result->s = strdup(s);
-		} else {
-			strcpy(result->buffer,s);
-			result->s = result->buffer;
-		}
-	}
-	result->delimiters				= delimiters;
-	result->current					 = NULL;
-	result->next							= result->s;
-	result->is_ignore_empties = (empties != TOKENIZER_EMPTIES_OK);
-
-	//return result;
-}
-
-const char* free_tokenizer( tokenizer_t* tokenizer )
-{
-	if (tokenizer->s_length > (PROXYSQL_TOKENIZER_BUFFSIZE-1)) {
-		free(tokenizer->s);
-	}
-	tokenizer->s = NULL;
-	return NULL;
-}
-
-const char* tokenize( tokenizer_t* tokenizer )
-{
-	if (!tokenizer->s) return NULL;
-
-	if (!tokenizer->next)
-		return free_tokenizer( tokenizer );
-
-	tokenizer->current = tokenizer->next;
-	tokenizer->next = strpbrk( tokenizer->current, tokenizer->delimiters );
-
-	if (tokenizer->next)
-	{
-		*tokenizer->next = '\0';
-		tokenizer->next += 1;
-
-		if (tokenizer->is_ignore_empties)
-		{
-			tokenizer->next += strspn( tokenizer->next, tokenizer->delimiters );
-			if (!(*tokenizer->current))
-				return tokenize( tokenizer );
-		}
-	}
-	else if (tokenizer->is_ignore_empties && !(*tokenizer->current))
-		return free_tokenizer( tokenizer );
-
-	return tokenizer->current;
-}
-
-
-void c_split_2(const char *in, const char *del, char **out1, char **out2) {
-	*out1=NULL;
-	*out2=NULL;
-	const char *t;
-	tokenizer_t tok;
-	tokenizer( &tok, in, del, TOKENIZER_NO_EMPTIES );
-	for ( t=tokenize(&tok); t; t=tokenize(&tok)) {
-		if (*out1==NULL) { *out1=strdup(t); continue; }
-		if (*out2==NULL) { *out2=strdup(t); continue; }
-	}
-	if (*out1==NULL) *out1=strdup("");
-	if (*out2==NULL) *out2=strdup("");
-	free_tokenizer( &tok );
-}
 #define SIZECHAR	sizeof(char)
+#define FIRST_COMMENT_MAX_LENGTH 1024
+
+int mysql_thread___query_digests_max_query_length = 65000;
+bool mysql_thread___query_digests_lowercase=0;
 
 // check char if it could be table name
 static inline char is_normal_char(char c)
@@ -179,7 +98,6 @@ static char is_digit_string(char *f, char *t)
 	return 1;
 }
 
-// sql->ダイジェストテキスト?
 char *mysql_query_digest_and_first_comment(char *s, int _len, char **first_comment, char *buf){
 	int i = 0;
 

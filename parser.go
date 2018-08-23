@@ -1,7 +1,6 @@
 package parser
 
 import (
-// #cgo CFLAGS: -I./lib/c_tokenizer.h
 // #include "./C/c_tokenizer.c"
 	"C"
 	"unsafe"
