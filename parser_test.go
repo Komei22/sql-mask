@@ -24,5 +24,16 @@ func TestPerseValidQuery(t *testing.T) {
 			t.Errorf("%s", query_digest)
 		}
 	}
+}
 
+func TestParseMultiByteQuery(t *testing.T) {
+	query := "SELECT * FROM user WHERE name = '太郎'"
+	expect_query_digest := "SELECT * FROM user WHERE name = ?"
+
+	query_digest := Parse(query)
+
+	if query_digest != expect_query_digest {
+		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expect_query_digest)
+		t.Errorf("%s", query_digest)
+	}
 }
