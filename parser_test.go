@@ -1,6 +1,9 @@
 package parser
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestPerseValidQuery(t *testing.T) {
 	querys := []string{
@@ -18,7 +21,7 @@ func TestPerseValidQuery(t *testing.T) {
 	}
 
 	for i := 0; i < len(querys); i++ {
-		query_digest := Parse(querys[i])
+		query_digest, _ := Parse(querys[i])
 		if query_digest != expect_query_digests[i] {
 			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expect_query_digests[i])
 			t.Errorf("%s", query_digest)
@@ -30,10 +33,29 @@ func TestParseMultiByteQuery(t *testing.T) {
 	query := "SELECT * FROM user WHERE name = '太郎'"
 	expect_query_digest := "SELECT * FROM user WHERE name = ?"
 
-	query_digest := Parse(query)
+	query_digest, _ := Parse(query)
 
 	if query_digest != expect_query_digest {
 		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expect_query_digest)
 		t.Errorf("%s", query_digest)
 	}
+}
+
+func TestParseNonValidQuery(t *testing.T) {
+
+}
+
+func TestParseTooLongQuery(t *testing.T) {
+	query := strings.Repeat("SELECT * FROM user WHERE id = 1;", 3000)
+
+	_, err := Parse(query)
+
+	if err == nil {
+		t.Error("Should be error")
+	}
+	// if query_digest == expect_query_digest {
+	// t.Error("Too long query is not parsed.")
+	// t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expect_query_digest)
+	// t.Errorf("%s", query_digest)
+	// }
 }

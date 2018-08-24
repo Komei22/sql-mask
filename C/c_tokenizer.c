@@ -10,6 +10,12 @@
 int mysql_thread___query_digests_max_query_length = 65000;
 bool mysql_thread___query_digests_lowercase=0;
 
+
+int get_query_digests_max_query_length()
+{
+	return mysql_thread___query_digests_max_query_length;
+}
+
 // check char if it could be table name
 static inline char is_normal_char(char c)
 {
