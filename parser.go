@@ -3,11 +3,12 @@ package parser
 import (
 	// #include "./C/c_tokenizer.c"
 	"C"
+	"unicode/utf8"
 	"unsafe"
 )
 
 func Parse(query string) string {
-	query_length := C.int(len(query))
+	query_length := C.int(utf8.RuneCountInString(query))
 	query_c := C.CString(query)
 	var first_comment **C.char = nil
 	var buf *C.char = nil
