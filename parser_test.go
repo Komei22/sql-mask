@@ -13,7 +13,7 @@ func TestPerseValidQuery(t *testing.T) {
 		"DELETE FROM `articles` WHERE `articles`.`id` = 4",
 	}
 
-	expect_query_digests := []string{
+	expectQueryDigests := []string{
 		"SELECT * FROM user WHERE id = ?",
 		"INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (?, ?, ?, ?)",
 		"UPDATE `articles` SET `content` = ?, `updated_at` = ? WHERE `articles`.`id` = ?",
@@ -21,23 +21,23 @@ func TestPerseValidQuery(t *testing.T) {
 	}
 
 	for i := 0; i < len(querys); i++ {
-		query_digest, _ := Parse(querys[i])
-		if query_digest != expect_query_digests[i] {
-			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expect_query_digests[i])
-			t.Errorf("%s", query_digest)
+		queryDigest, _ := Parse(querys[i])
+		if queryDigest != expectQueryDigests[i] {
+			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expectQueryDigests[i])
+			t.Errorf("%s", queryDigest)
 		}
 	}
 }
 
 func TestParseMultiByteQuery(t *testing.T) {
 	query := "SELECT * FROM user WHERE name = '太郎'"
-	expect_query_digest := "SELECT * FROM user WHERE name = ?"
+	expectQueryDigest := "SELECT * FROM user WHERE name = ?"
 
-	query_digest, _ := Parse(query)
+	queryDigest, _ := Parse(query)
 
-	if query_digest != expect_query_digest {
-		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expect_query_digest)
-		t.Errorf("%s", query_digest)
+	if queryDigest != expectQueryDigest {
+		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
+		t.Errorf("%s", queryDigest)
 	}
 }
 
@@ -53,9 +53,4 @@ func TestParseTooLongQuery(t *testing.T) {
 	if err == nil {
 		t.Error("Should be error")
 	}
-	// if query_digest == expect_query_digest {
-	// t.Error("Too long query is not parsed.")
-	// t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expect_query_digest)
-	// t.Errorf("%s", query_digest)
-	// }
 }

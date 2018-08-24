@@ -8,22 +8,23 @@ import (
 	"unsafe"
 )
 
+// Parse convert query to query digest that masked literal.
 func Parse(query string) (string, error) {
-	query_length := C.int(utf8.RuneCountInString(query))
-	query_c := C.CString(query)
-	var first_comment **C.char = nil
-	var buf *C.char = nil
+	queryLength := C.int(utf8.RuneCountInString(query))
+	queryC := C.CString(query)
+	var firstComment **C.char
+	var buf *C.char
 
-	defer C.free(unsafe.Pointer(query_c))
-	defer C.free(unsafe.Pointer(first_comment))
+	defer C.free(unsafe.Pointer(queryC))
+	defer C.free(unsafe.Pointer(firstComment))
 	defer C.free(unsafe.Pointer(buf))
 
-	if query_length > C.get_query_digests_max_query_length() {
+	if queryLength > C.get_query_digests_max_query_length() {
 		return query, errors.New("Query length is over 65000 charactors")
 	}
 
-	query_digest_c := C.mysql_query_digest_and_first_comment(query_c, query_length, first_comment, buf)
-	query_digest := C.GoString(query_digest_c)
+	queryDigestC := C.mysql_query_digest_and_first_comment(queryC, queryLength, firstComment, buf)
+	queryDigest := C.GoString(queryDigestC)
 
-	return query_digest, nil
+	return queryDigest, nil
 }
