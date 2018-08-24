@@ -2,7 +2,7 @@ package parser
 
 import "testing"
 
-func TestParse(t *testing.T) {
+func TestPerseValidQuery(t *testing.T) {
 	querys := []string{
 		"SELECT * FROM user WHERE id = 1",
 		"INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES ('test', 'test', '2018-08-23 03:56:44', '2018-08-23 03:56:44')",
