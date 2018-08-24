@@ -13,12 +13,12 @@ func Parse(query string) string {
 	var first_comment **C.char = nil
 	var buf *C.char = nil
 
+	defer C.free(unsafe.Pointer(query_c))
+	defer C.free(unsafe.Pointer(first_comment))
+	defer C.free(unsafe.Pointer(buf))
+
 	query_digest_c := C.mysql_query_digest_and_first_comment(query_c, query_length, first_comment, buf)
 	query_digest := C.GoString(query_digest_c)
-
-	C.free(unsafe.Pointer(query_c))
-	C.free(unsafe.Pointer(first_comment))
-	C.free(unsafe.Pointer(buf))
 
 	return query_digest
 }
