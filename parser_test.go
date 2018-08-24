@@ -3,7 +3,6 @@ package parser
 import "testing"
 
 func TestParse(t *testing.T) {
-	p := Parser{}
 	querys := []string{
 		"SELECT * FROM user WHERE id = 1",
 		"INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES ('test', 'test', '2018-08-23 03:56:44', '2018-08-23 03:56:44')",
@@ -19,7 +18,7 @@ func TestParse(t *testing.T) {
 	}
 
 	for i := 0; i < len(querys); i++ {
-		query_digest := p.Parse(querys[i])
+		query_digest := Parse(querys[i])
 		if query_digest != expect_query_digests[i] {
 			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expect_query_digests[i])
 			t.Errorf("%s", query_digest)

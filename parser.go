@@ -1,14 +1,12 @@
 package parser
 
 import (
-// #include "./C/c_tokenizer.c"
+	// #include "./C/c_tokenizer.c"
 	"C"
 	"unsafe"
 )
 
-type Parser struct {}
-
-func (p Parser) Parse(query string) string {
+func Parse(query string) string {
 	query_length := C.int(len(query))
 	query_c := C.CString(query)
 	var first_comment **C.char = nil
