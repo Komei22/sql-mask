@@ -3,7 +3,7 @@ package parser
 import (
 	// #include "./C/c_tokenizer.c"
 	"C"
-	"errors"
+	"fmt"
 	"unicode/utf8"
 	"unsafe"
 )
@@ -19,8 +19,9 @@ func Parse(query string) (string, error) {
 	defer C.free(unsafe.Pointer(firstComment))
 	defer C.free(unsafe.Pointer(buf))
 
-	if queryLength > C.get_query_digests_max_query_length() {
-		return query, errors.New("Query length is over 65000 charactors")
+	queryDigestsMaxQueryLength := C.get_query_digests_max_query_length()
+	if queryLength > queryDigestsMaxQueryLength {
+		return query, fmt.Errorf("Query length is over %d charactors", queryDigestsMaxQueryLength)
 	}
 
 	queryDigestC := C.mysql_query_digest_and_first_comment(queryC, queryLength, firstComment, buf)
