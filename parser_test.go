@@ -24,7 +24,7 @@ func TestPerseValidQuery(t *testing.T) {
 		queryDigest, _ := Parse(querys[i])
 		if queryDigest != expectQueryDigests[i] {
 			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expectQueryDigests[i])
-			t.Errorf("%s", queryDigest)
+			t.Errorf("QueryDigest is \"%s\"", queryDigest)
 		}
 	}
 }
@@ -37,7 +37,7 @@ func TestParseMultiByteQuery(t *testing.T) {
 
 	if queryDigest != expectQueryDigest {
 		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
-		t.Errorf("%s", queryDigest)
+		t.Errorf("QueryDigest is \"%s\"", queryDigest)
 	}
 }
 
@@ -49,7 +49,7 @@ func TestParseInvalidQuery(t *testing.T) {
 
 	if queryDigest != expectQueryDigest {
 		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
-		t.Errorf("%s", queryDigest)
+		t.Errorf("QueryDigest is \"%s\"", queryDigest)
 	}
 }
 
