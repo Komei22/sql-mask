@@ -41,8 +41,16 @@ func TestParseMultiByteQuery(t *testing.T) {
 	}
 }
 
-func TestParseNonValidQuery(t *testing.T) {
+func TestParseInvalidQuery(t *testing.T) {
+	query := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, '2018-08-23 03:56:44', '2018-08-23 03:56:44')"
+	expectQueryDigest := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, ?, ?)"
 
+	queryDigest, _ := Parse(query)
+
+	if queryDigest != expectQueryDigest {
+		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
+		t.Errorf("%s", queryDigest)
+	}
 }
 
 func TestParseTooLongQuery(t *testing.T) {
