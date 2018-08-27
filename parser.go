@@ -16,8 +16,6 @@ func Parse(query string) (string, error) {
 	var buf *C.char
 
 	defer C.free(unsafe.Pointer(queryC))
-	defer C.free(unsafe.Pointer(firstComment))
-	defer C.free(unsafe.Pointer(buf))
 
 	queryDigestsMaxQueryLength := C.get_query_digests_max_query_length()
 	if queryLength > queryDigestsMaxQueryLength {
