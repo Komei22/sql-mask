@@ -1,6 +1,8 @@
 package masker
 
 import (
+	"github.com/lfittl/pg_query_go"
+	"regexp"
 	// #include "./C/c_tokenizer.c"
 	"C"
 	"fmt"
@@ -33,6 +35,21 @@ func (m *MysqlMasker) mask(query string) (string, error) {
 	queryDigest := C.GoString(queryDigestC)
 
 	return queryDigest, nil
+}
+
+// PgMasker is masker for PostgreSQL.
+type PgMasker struct{}
+
+func (p *PgMasker) mask(query string) (string, error) {
+	normalizedQuery, err := pg_query.Normalize(query)
+	if err != nil {
+		return query, err
+	}
+
+	rep := regexp.MustCompile(`\$[0-9]*`)
+	maskedQuery := rep.ReplaceAllString(normalizedQuery, `?`)
+
+	return maskedQuery, nil
 }
 
 // Mask mask literal values in a query
