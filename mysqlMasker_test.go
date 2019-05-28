@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMaskValidQuery(t *testing.T) {
+func TestMaskValidMysqlQuery(t *testing.T) {
 	querys := []string{
 		"SELECT * FROM user WHERE id = 1",
 		"INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES ('test', 'test', '2018-08-23 03:56:44', '2018-08-23 03:56:44')",
@@ -30,7 +30,7 @@ func TestMaskValidQuery(t *testing.T) {
 	}
 }
 
-func TestMaskMultiByteQuery(t *testing.T) {
+func TestMaskMultiByteMysqlQuery(t *testing.T) {
 	query := "SELECT * FROM user WHERE name = '太郎'"
 	expectQueryDigest := "SELECT * FROM user WHERE name = ?"
 
@@ -43,7 +43,7 @@ func TestMaskMultiByteQuery(t *testing.T) {
 	}
 }
 
-func TestMaskInvalidQuery(t *testing.T) {
+func TestMaskInvalidMysqlQuery(t *testing.T) {
 	query := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, '2018-08-23 03:56:44', '2018-08-23 03:56:44')"
 	expectQueryDigest := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, ?, ?)"
 
@@ -56,7 +56,7 @@ func TestMaskInvalidQuery(t *testing.T) {
 	}
 }
 
-func TestMaskTooLongQuery(t *testing.T) {
+func TestMaskTooLongMysqlQuery(t *testing.T) {
 	query := strings.Repeat("SELECT * FROM user WHERE id = 1;", 3000)
 
 	m := &MysqlMasker{}
