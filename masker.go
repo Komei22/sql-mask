@@ -1,4 +1,4 @@
-package parser
+package masker
 
 import (
 	// #include "./C/c_tokenizer.c"
@@ -8,8 +8,16 @@ import (
 	"unsafe"
 )
 
-// Parse convert query to query digest that masked literal.
-func Parse(query string) (string, error) {
+// Masker is masker interface
+type Masker interface {
+	mask(string) (string, error)
+}
+
+// MysqlMasker is masker for mysql
+type MysqlMasker struct{}
+
+// MaskMySQL convert query to query digest that masked literal.
+func (m *MysqlMasker) mask(query string) (string, error) {
 	queryLength := C.int(utf8.RuneCountInString(query))
 	queryC := C.CString(query)
 	var firstComment **C.char
@@ -26,4 +34,9 @@ func Parse(query string) (string, error) {
 	queryDigest := C.GoString(queryDigestC)
 
 	return queryDigest, nil
+}
+
+// Mask mask literal values in a query
+func Mask(m Masker, query string) (string, error) {
+	return m.mask(query)
 }

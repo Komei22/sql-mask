@@ -1,11 +1,11 @@
-package parser
+package masker
 
 import (
 	"strings"
 	"testing"
 )
 
-func TestPerseValidQuery(t *testing.T) {
+func TestMaskValidQuery(t *testing.T) {
 	querys := []string{
 		"SELECT * FROM user WHERE id = 1",
 		"INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES ('test', 'test', '2018-08-23 03:56:44', '2018-08-23 03:56:44')",
@@ -20,8 +20,9 @@ func TestPerseValidQuery(t *testing.T) {
 		"DELETE FROM `articles` WHERE `articles`.`id` = ?",
 	}
 
+	m := &MysqlMasker{}
 	for i := 0; i < len(querys); i++ {
-		queryDigest, _ := Parse(querys[i])
+		queryDigest, _ := Mask(m, querys[i])
 		if queryDigest != expectQueryDigests[i] {
 			t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", querys[i], expectQueryDigests[i])
 			t.Errorf("QueryDigest is \"%s\"", queryDigest)
@@ -29,11 +30,12 @@ func TestPerseValidQuery(t *testing.T) {
 	}
 }
 
-func TestParseMultiByteQuery(t *testing.T) {
+func TestMaskMultiByteQuery(t *testing.T) {
 	query := "SELECT * FROM user WHERE name = '太郎'"
 	expectQueryDigest := "SELECT * FROM user WHERE name = ?"
 
-	queryDigest, _ := Parse(query)
+	m := &MysqlMasker{}
+	queryDigest, _ := Mask(m, query)
 
 	if queryDigest != expectQueryDigest {
 		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
@@ -41,11 +43,12 @@ func TestParseMultiByteQuery(t *testing.T) {
 	}
 }
 
-func TestParseInvalidQuery(t *testing.T) {
+func TestMaskInvalidQuery(t *testing.T) {
 	query := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, '2018-08-23 03:56:44', '2018-08-23 03:56:44')"
 	expectQueryDigest := "INSERT INTO `articles` (`title`, `content`, `created_at`, `updated_at`) VALUES (test, test, ?, ?)"
 
-	queryDigest, _ := Parse(query)
+	m := &MysqlMasker{}
+	queryDigest, _ := Mask(m, query)
 
 	if queryDigest != expectQueryDigest {
 		t.Errorf(" Query digest of \"%s\" does not match \"%s\". ", query, expectQueryDigest)
@@ -53,10 +56,11 @@ func TestParseInvalidQuery(t *testing.T) {
 	}
 }
 
-func TestParseTooLongQuery(t *testing.T) {
+func TestMaskTooLongQuery(t *testing.T) {
 	query := strings.Repeat("SELECT * FROM user WHERE id = 1;", 3000)
 
-	_, err := Parse(query)
+	m := &MysqlMasker{}
+	_, err := Mask(m, query)
 
 	if err == nil {
 		t.Error("Should be error")
