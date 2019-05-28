@@ -16,7 +16,6 @@ type Masker interface {
 // MysqlMasker is masker for mysql
 type MysqlMasker struct{}
 
-// MaskMySQL convert query to query digest that masked literal.
 func (m *MysqlMasker) mask(query string) (string, error) {
 	queryLength := C.int(utf8.RuneCountInString(query))
 	queryC := C.CString(query)
