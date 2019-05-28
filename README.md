@@ -33,7 +33,7 @@ func main() {
 Running will output the query digest which masked the literal value of input MySQL query:
 
 ```sh
-$ go run sql-mask.go
+$ go run main.go
 SELECT * FROM `user` WHERE `id` = ?
 ```
 
@@ -62,6 +62,6 @@ func main() {
 Running will output the query digest which masked the literal value of input PostgreSQL query:
 
 ```sh
-$ go run sql-mask.go
+$ go run main.go
 SELECT * FROM "user" WHERE "id" = ?
 ```
