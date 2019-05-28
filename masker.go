@@ -1,13 +1,14 @@
 package masker
 
 import (
-	"github.com/lfittl/pg_query_go"
-	"regexp"
 	// #include "./C/c_tokenizer.c"
 	"C"
 	"fmt"
+	"regexp"
 	"unicode/utf8"
 	"unsafe"
+
+	"github.com/lfittl/pg_query_go"
 )
 
 // Masker is masker interface
