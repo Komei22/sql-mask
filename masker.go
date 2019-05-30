@@ -41,13 +41,14 @@ func (m *MysqlMasker) mask(query string) (string, error) {
 // PgMasker is masker for PostgreSQL.
 type PgMasker struct{}
 
+var rep = regexp.MustCompile(`\$[0-9]*`)
+
 func (p *PgMasker) mask(query string) (string, error) {
 	normalizedQuery, err := pg_query.Normalize(query)
 	if err != nil {
 		return query, err
 	}
 
-	rep := regexp.MustCompile(`\$[0-9]*`)
 	maskedQuery := rep.ReplaceAllString(normalizedQuery, `?`)
 
 	return maskedQuery, nil
