@@ -52,7 +52,7 @@ func TestMysqlMasker_mask(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "Too long query",
+			name:    "Too long invalid query",
 			args:    args{query: strings.Repeat("SELECT * FROM user WHERE id = 1;", 3000)},
 			want:    strings.Repeat("SELECT * FROM user WHERE id = 1;", 3000),
 			wantErr: true,
