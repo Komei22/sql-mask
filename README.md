@@ -30,7 +30,7 @@ func main() {
 	fmt.Println(queryDigest)
 }
 ```
-Running will output the query digest which masked the literal value of input MySQL query:
+Running will output the query digest which is masked the literal value of input MySQL query:
 
 ```sh
 $ go run main.go
@@ -59,7 +59,7 @@ func main() {
 	fmt.Println(queryDigest)
 }
 ```
-Running will output the query digest which masked the literal value of input PostgreSQL query:
+Running will output the query digest which is masked the literal value of input PostgreSQL query:
 
 ```sh
 $ go run main.go
