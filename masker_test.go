@@ -83,7 +83,42 @@ func TestPgMasker_mask(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "Valid query : SELECT",
+			args:    args{query: `SELECT * FROM "user" WHERE "id" = 1;`},
+			want:    `SELECT * FROM "user" WHERE "id" = ?;`,
+			wantErr: false,
+		},
+		{
+			name:    "Valid query : INSERT",
+			args:    args{query: `INSERT INTO "articles" ("title", "content", "created_at", "updated_at") VALUES ('test', 'test', '2018-08-23 03:56:44', '2018-08-23 03:56:44') RETURNING *;`},
+			want:    `INSERT INTO "articles" ("title", "content", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING *;`,
+			wantErr: false,
+		},
+		{
+			name:    "Valid query : UPDATE",
+			args:    args{query: `UPDATE "articles" SET "content" = '12345', "updated_at" = '2018-08-23 03:57:53' WHERE "id" = 4;`},
+			want:    `UPDATE "articles" SET "content" = ?, "updated_at" = ? WHERE "id" = ?;`,
+			wantErr: false,
+		},
+		{
+			name:    "Valid query : DELETE",
+			args:    args{query: `DELETE FROM "articles" WHERE "id" IN (SELECT "id" FROM "articles" WHERE "id" = '4' LIMIT 1)`},
+			want:    `DELETE FROM "articles" WHERE "id" IN (SELECT "id" FROM "articles" WHERE "id" = ? LIMIT ?)`,
+			wantErr: false,
+		},
+		{
+			name:    "Multi byte query",
+			args:    args{query: `SELECT * FROM "user" WHERE "name" = '太郎'`},
+			want:    `SELECT * FROM "user" WHERE "name" = ?`,
+			wantErr: false,
+		},
+		{
+			name:    "Invalid query",
+			args:    args{query: `INSERT INTO "articles" ("title", "content", "created_at", "updated_at") VALUES (test, test, '2018-08-23 03:56:44', '2018-08-23 03:56:44') RETURNING *;`},
+			want:    `INSERT INTO "articles" ("title", "content", "created_at", "updated_at") VALUES (test, test, ?, ?) RETURNING *;`,
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
